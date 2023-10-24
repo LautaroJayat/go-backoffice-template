@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/api/http/product_crud"
-	"github.com/lautarojayat/e_shop/config"
-	database "github.com/lautarojayat/e_shop/persistence/db"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/api/http/product_crud"
+	"github.com/lautarojayat/backoffice/config"
+	database "github.com/lautarojayat/backoffice/persistence/db"
+	"github.com/lautarojayat/backoffice/products"
 	"gorm.io/gorm"
 )
 

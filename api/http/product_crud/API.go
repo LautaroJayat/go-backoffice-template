@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	products "github.com/lautarojayat/e_shop/products"
+	products "github.com/lautarojayat/backoffice/products"
 )
 
 type productsMux struct {

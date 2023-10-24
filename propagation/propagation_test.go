@@ -4,8 +4,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/products"
-	users "github.com/lautarojayat/e_shop/users"
+	"github.com/lautarojayat/backoffice/products"
+	users "github.com/lautarojayat/backoffice/users"
 )
 
 func testForProducts(t *testing.T, p *Publisher) {

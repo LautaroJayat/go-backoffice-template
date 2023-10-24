@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 func TestUpdateCustomerHandler(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/lautarojayat/e_shop/api/http/response"
-	users "github.com/lautarojayat/e_shop/users"
+	"github.com/lautarojayat/backoffice/api/http/response"
+	users "github.com/lautarojayat/backoffice/users"
 )
 
 func (cmux *usersMux) createCustomer(w http.ResponseWriter, r *http.Request) {

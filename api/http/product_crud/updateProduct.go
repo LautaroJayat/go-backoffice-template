@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 func (pmux *productsMux) updateProduct(w http.ResponseWriter, r *http.Request) {

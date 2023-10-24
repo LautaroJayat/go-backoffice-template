@@ -3,8 +3,8 @@ package db
 import (
 	"log"
 
-	"github.com/lautarojayat/e_shop/products"
-	users "github.com/lautarojayat/e_shop/users"
+	"github.com/lautarojayat/backoffice/products"
+	users "github.com/lautarojayat/backoffice/users"
 	"gorm.io/gorm"
 )
 

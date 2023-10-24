@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lautarojayat/e_shop/api/http/response"
+	"github.com/lautarojayat/backoffice/api/http/response"
 )
 
 func (pmux *productsMux) findProduct(w http.ResponseWriter, r *http.Request) {

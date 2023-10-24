@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	users "github.com/lautarojayat/e_shop/users"
+	users "github.com/lautarojayat/backoffice/users"
 )
 
 func (cmux *usersMux) updateCustomer(w http.ResponseWriter, r *http.Request) {

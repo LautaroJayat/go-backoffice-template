@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/api/http/response"
+	"github.com/lautarojayat/backoffice/api/http/response"
 )
 
 func TestCreateCustomerHandler(t *testing.T) {

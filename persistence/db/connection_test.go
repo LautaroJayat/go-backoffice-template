@@ -3,7 +3,7 @@ package db
 import (
 	"testing"
 
-	"github.com/lautarojayat/e_shop/config"
+	"github.com/lautarojayat/backoffice/config"
 )
 
 func TestConnectionOptions(t *testing.T) {

@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 type ProductResponse struct {

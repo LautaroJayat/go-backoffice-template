@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/api/http/response"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/api/http/response"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 func TestFindProductHandler(t *testing.T) {

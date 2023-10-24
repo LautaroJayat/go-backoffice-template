@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lautarojayat/e_shop/config"
-	"github.com/lautarojayat/e_shop/products"
-	users "github.com/lautarojayat/e_shop/users"
+	"github.com/lautarojayat/backoffice/config"
+	"github.com/lautarojayat/backoffice/products"
+	users "github.com/lautarojayat/backoffice/users"
 	"github.com/redis/go-redis/v9"
 )
 

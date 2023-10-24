@@ -1,7 +1,7 @@
 package response
 
 import (
-	users "github.com/lautarojayat/e_shop/users"
+	users "github.com/lautarojayat/backoffice/users"
 )
 
 type CustomerResponse struct {

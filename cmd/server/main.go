@@ -9,16 +9,16 @@ import (
 	"syscall"
 	"time"
 
-	httpApi "github.com/lautarojayat/e_shop/api/http"
-	"github.com/lautarojayat/e_shop/config"
-	"github.com/lautarojayat/e_shop/logger"
-	database "github.com/lautarojayat/e_shop/persistence/db"
-	"github.com/lautarojayat/e_shop/products"
-	"github.com/lautarojayat/e_shop/propagation"
-	users "github.com/lautarojayat/e_shop/users"
+	httpApi "github.com/lautarojayat/backoffice/api/http"
+	"github.com/lautarojayat/backoffice/config"
+	"github.com/lautarojayat/backoffice/logger"
+	database "github.com/lautarojayat/backoffice/persistence/db"
+	"github.com/lautarojayat/backoffice/products"
+	"github.com/lautarojayat/backoffice/propagation"
+	users "github.com/lautarojayat/backoffice/users"
 
-	"github.com/lautarojayat/e_shop/persistence/files"
-	"github.com/lautarojayat/e_shop/server"
+	"github.com/lautarojayat/backoffice/persistence/files"
+	"github.com/lautarojayat/backoffice/server"
 )
 
 func listenAndServe(s *http.Server, notifyEnd chan struct{}) {

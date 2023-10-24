@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lautarojayat/e_shop/config"
+	"github.com/lautarojayat/backoffice/config"
 )
 
 func NewServer(cfg config.HTTPConfig, mux *http.ServeMux) *http.Server {

@@ -1,4 +1,4 @@
-module github.com/lautarojayat/e_shop
+module github.com/lautarojayat/backoffice
 
 go 1.21.1
 

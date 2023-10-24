@@ -3,7 +3,7 @@ package db
 import (
 	"strings"
 
-	"github.com/lautarojayat/e_shop/config"
+	"github.com/lautarojayat/backoffice/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

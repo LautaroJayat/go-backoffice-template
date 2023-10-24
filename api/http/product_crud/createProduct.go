@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/lautarojayat/e_shop/api/http/response"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/api/http/response"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 func (pmux *productsMux) createProduct(w http.ResponseWriter, r *http.Request) {

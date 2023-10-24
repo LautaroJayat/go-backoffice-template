@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	res "github.com/lautarojayat/e_shop/api/http/response"
+	res "github.com/lautarojayat/backoffice/api/http/response"
 )
 
 func (pmux *productsMux) listProducts(w http.ResponseWriter, r *http.Request) {

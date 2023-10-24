@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lautarojayat/e_shop/config"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/config"
+	"github.com/lautarojayat/backoffice/products"
 	"github.com/redis/go-redis/v9"
 )
 

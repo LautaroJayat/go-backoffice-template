@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/lautarojayat/e_shop/api/http/response"
-	"github.com/lautarojayat/e_shop/products"
+	"github.com/lautarojayat/backoffice/api/http/response"
+	"github.com/lautarojayat/backoffice/products"
 )
 
 func TestListCustomerHandler(t *testing.T) {

@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lautarojayat/e_shop/api/http/meta"
-	"github.com/lautarojayat/e_shop/api/http/product_crud"
-	"github.com/lautarojayat/e_shop/api/http/users_crud"
-	"github.com/lautarojayat/e_shop/products"
-	users "github.com/lautarojayat/e_shop/users"
+	"github.com/lautarojayat/backoffice/api/http/meta"
+	"github.com/lautarojayat/backoffice/api/http/product_crud"
+	"github.com/lautarojayat/backoffice/api/http/users_crud"
+	"github.com/lautarojayat/backoffice/products"
+	users "github.com/lautarojayat/backoffice/users"
 )
 
 func MakeHTTPEndpoints(l *log.Logger, usersRepo *users.Repo, productsRepo *products.Repo) *http.ServeMux {
