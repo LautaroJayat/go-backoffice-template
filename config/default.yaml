@@ -1,0 +1,21 @@
+HTTP:
+  ReadTimeout: 10
+  WriteTimeout: 10
+  MaxheaderBytesShift: 1024
+  Port: :8080
+  AppName: "AppNumberOne"
+DB:
+  Host: localhost
+  User: user
+  Password: password
+  DBName: db1 
+  Port: 5432
+  SSLMode: disable
+Propagation:
+  Redis:
+    Addr: localhost:6379
+    User: user
+    Password: password
+  Channels:
+    Customers: users
+    Products: products
