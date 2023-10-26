@@ -8,11 +8,17 @@ import (
 	users "github.com/lautarojayat/backoffice/users"
 )
 
-func (cmux *usersMux) createCustomer(w http.ResponseWriter, r *http.Request) {
+func (cmux *usersMux) createUser(w http.ResponseWriter, r *http.Request) {
 	users := &users.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(users); err != nil {
 		cmux.l.Printf("could not extract users from request. error=%q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(users.Name) < 4 {
+		cmux.l.Println("user name should contian at least 4 chars")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -25,7 +31,7 @@ func (cmux *usersMux) createCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseBody, err := json.Marshal(response.ToCustomerResponse(*users))
+	responseBody, err := json.Marshal(response.ToUserResponse(*users))
 	if err != nil {
 		cmux.l.Printf("could not format json for response. error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)

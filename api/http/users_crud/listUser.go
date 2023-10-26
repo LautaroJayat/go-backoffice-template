@@ -8,7 +8,7 @@ import (
 	res "github.com/lautarojayat/backoffice/api/http/response"
 )
 
-func (cmux *usersMux) listCustomers(w http.ResponseWriter, r *http.Request) {
+func (cmux *usersMux) listUsers(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil || limit < 1 || limit > 50 {
 		limit = 10
@@ -32,9 +32,9 @@ func (cmux *usersMux) listCustomers(w http.ResponseWriter, r *http.Request) {
 		Offset: offset,
 	}
 
-	response := &res.PaginatedCustomers{
+	response := &res.PaginatedUsers{
 		Pagination: p,
-		Customers:  res.ToCustomersResponse(c),
+		Users:      res.ToUsersResponse(c),
 	}
 
 	responseBody, err := json.Marshal(response)

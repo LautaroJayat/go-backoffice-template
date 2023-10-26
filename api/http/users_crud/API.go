@@ -6,6 +6,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/lautarojayat/backoffice/api/http/middleware"
+	"github.com/lautarojayat/backoffice/roles"
 	users "github.com/lautarojayat/backoffice/users"
 )
 
@@ -15,13 +17,13 @@ type usersMux struct {
 }
 
 func NewMux(l *log.Logger, r *users.Repo) *chi.Mux {
-	cMux := &usersMux{l, r}
+	uMux := &usersMux{l, r}
 	m := chi.NewMux()
 
-	m.Get("/", cMux.listCustomers)
-	m.Post("/", cMux.createCustomer)
-	m.Get("/{id}", cMux.findCustomer)
-	m.Put("/{id}", cMux.updateCustomer)
+	m.Get("/", middleware.CheckRole(l, []roles.Role{roles.ReadUser}, uMux.listUsers))
+	m.Post("/", middleware.CheckRole(l, []roles.Role{roles.CreateUser}, uMux.createUser))
+	m.Get("/{id}", middleware.CheckRole(l, []roles.Role{roles.ReadUser}, uMux.findUser))
+	m.Put("/{id}", middleware.CheckRole(l, []roles.Role{roles.ModifyUser}, uMux.updateUser))
 	return m
 }
 

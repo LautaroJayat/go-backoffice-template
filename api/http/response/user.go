@@ -4,7 +4,7 @@ import (
 	users "github.com/lautarojayat/backoffice/users"
 )
 
-type CustomerResponse struct {
+type UserResponse struct {
 	Id        uint   `json:"id"`
 	Name      string `json:"name"`
 	CreatedAt int64  `json:"createdAt"`
@@ -12,16 +12,16 @@ type CustomerResponse struct {
 	DeletedAt int64  `json:"deletedAt"`
 }
 
-func ToCustomersResponse(c []users.User) []CustomerResponse {
-	out := make([]CustomerResponse, len(c))
+func ToUsersResponse(c []users.User) []UserResponse {
+	out := make([]UserResponse, len(c))
 	for i := 0; i < len(c); i += 1 {
-		out = append(out, ToCustomerResponse(c[i]))
+		out = append(out, ToUserResponse(c[i]))
 	}
 	return out
 }
 
-func ToCustomerResponse(c users.User) CustomerResponse {
-	return CustomerResponse{
+func ToUserResponse(c users.User) UserResponse {
+	return UserResponse{
 		Id:        c.ID,
 		Name:      c.Name,
 		CreatedAt: c.CreatedAt.Local().UnixMilli(),
@@ -30,7 +30,7 @@ func ToCustomerResponse(c users.User) CustomerResponse {
 	}
 }
 
-type PaginatedCustomers struct {
-	Pagination Pagination         `json:"pagination"`
-	Customers  []CustomerResponse `json:"users"`
+type PaginatedUsers struct {
+	Pagination Pagination     `json:"pagination"`
+	Users      []UserResponse `json:"users"`
 }

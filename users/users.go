@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -58,14 +59,17 @@ func (r *Repo) CreateOne(name string) (*User, error) {
 
 func (r *Repo) FindById(id int) (*User, error) {
 	c := &User{}
-	result := r.db.Find(c, id)
+	result := r.db.First(c, id)
 	if result.Error != nil {
+		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, result.Error
 	}
 	return c, nil
 }
 
-func (r *Repo) UpdateOne(id int, name string) error {
+func (r *Repo) UpdateOne(id int, name string) (bool, error) {
 	result := r.db.Model(User{}).Where("id = ?", id).Update("name", name)
-	return result.Error
+	return result.RowsAffected > 0, result.Error
 }
