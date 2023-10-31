@@ -2,6 +2,7 @@ package products
 
 import (
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -49,14 +50,17 @@ func (r *Repo) CreateOne(name string, price uint) (*Product, error) {
 
 func (r *Repo) FindById(id int) (*Product, error) {
 	c := &Product{}
-	result := r.db.Find(c, id)
+	result := r.db.First(c, id)
 	if result.Error != nil {
-		return nil, result.Error
+		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, result.Error
+		}
+		return nil, nil
 	}
 	return c, nil
 }
 
-func (r *Repo) UpdateOne(id int, p Product) error {
+func (r *Repo) UpdateOne(id int, p Product) (bool, error) {
 	toUpdate := make(map[string]interface{})
 	if p.Name != "" {
 		toUpdate["name"] = p.Name
@@ -66,5 +70,5 @@ func (r *Repo) UpdateOne(id int, p Product) error {
 	}
 
 	result := r.db.Model(Product{}).Where("id = ?", id).Updates(toUpdate)
-	return result.Error
+	return result.RowsAffected > 0, result.Error
 }

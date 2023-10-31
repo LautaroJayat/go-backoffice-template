@@ -31,11 +31,16 @@ func (pmux *productsMux) updateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = pmux.r.UpdateOne(id, p)
+	done, err := pmux.r.UpdateOne(id, p)
 
 	if err != nil {
 		pmux.l.Printf("could not update users. error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if !done {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

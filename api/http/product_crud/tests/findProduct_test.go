@@ -10,6 +10,7 @@ import (
 
 	"github.com/lautarojayat/backoffice/api/http/response"
 	"github.com/lautarojayat/backoffice/products"
+	"github.com/lautarojayat/backoffice/roles"
 )
 
 func TestFindProductHandler(t *testing.T) {
@@ -22,46 +23,65 @@ func TestFindProductHandler(t *testing.T) {
 		t.Fatalf("could not create product to test endpoint. error=%q", result.Error)
 	}
 
-	id := strconv.FormatUint(uint64(expectedProduct.ID), 10)
+	id := uint64(expectedProduct.ID)
 
-	var builder strings.Builder
-	builder.WriteString("/products/")
-	builder.WriteString(id)
-	path := builder.String()
-
-	req, err := http.NewRequest("GET", path, nil)
-
-	if err != nil {
-		t.Fatalf("could not create correct request to test endpoint. error=%q", err)
+	tests := []struct {
+		id             string
+		checkBody      bool
+		auth           roles.Role
+		expectedStatus int
+	}{
+		{strconv.FormatUint(id, 10), true, roles.ReadProduct, http.StatusOK},
+		{strconv.FormatUint(id+1, 10), false, roles.ReadProduct, http.StatusNotFound},
+		{strconv.FormatUint(id, 10), false, roles.CreateProduct, http.StatusForbidden},
 	}
 
-	rr := httptest.NewRecorder()
-	mux.ServeHTTP(rr, req)
+	for _, test := range tests {
 
-	if rr.Code != http.StatusOK {
-		t.Errorf("status must be 200, instead got %d", rr.Code)
-	}
+		var builder strings.Builder
+		builder.WriteString("/products/")
+		builder.WriteString(test.id)
+		path := builder.String()
 
-	var payload response.ProductResponse
-	err = json.NewDecoder(rr.Result().Body).Decode(&payload)
+		req, err := http.NewRequest("GET", path, nil)
 
-	if err != nil {
-		t.Fatalf("couldn't read response body. error=%q", err)
-	}
+		if err != nil {
+			t.Fatalf("could not create correct request to test endpoint. error=%q", err)
+		}
+		req.Header.Add(roles.DecodedPermsHeader, strconv.FormatUint(uint64(test.auth), 2))
 
-	if payload.Id != expectedProduct.ID {
-		t.Errorf("Id must be %d, instead got %d", expectedProduct.ID, payload.Id)
-	}
-	if payload.Name != expectedProduct.Name {
-		t.Errorf("Name must be %q, instead got %q", expectedProduct.Name, payload.Name)
-	}
-	if payload.Price != expectedProduct.Price {
-		t.Errorf("Price must be %d, instead got %d", expectedProduct.Price, payload.Price)
-	}
-	if payload.CreatedAt != expectedProduct.CreatedAt.UnixMilli() {
-		t.Errorf("CreatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), payload.CreatedAt)
-	}
-	if payload.UpdatedAt != expectedProduct.CreatedAt.UnixMilli() {
-		t.Errorf("UpdatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), payload.UpdatedAt)
+		rr := httptest.NewRecorder()
+		mux.ServeHTTP(rr, req)
+
+		if rr.Code != test.expectedStatus {
+			t.Errorf("status must be %d, instead got %d", test.expectedStatus, rr.Code)
+		}
+
+		if !test.checkBody {
+			continue
+		}
+
+		var payload response.ProductResponse
+		err = json.NewDecoder(rr.Result().Body).Decode(&payload)
+
+		if err != nil {
+			t.Fatalf("couldn't read response body. error=%q", err)
+		}
+
+		if payload.Id != expectedProduct.ID {
+			t.Errorf("Id must be %d, instead got %d", expectedProduct.ID, payload.Id)
+		}
+		if payload.Name != expectedProduct.Name {
+			t.Errorf("Name must be %q, instead got %q", expectedProduct.Name, payload.Name)
+		}
+		if payload.Price != expectedProduct.Price {
+			t.Errorf("Price must be %d, instead got %d", expectedProduct.Price, payload.Price)
+		}
+		if payload.CreatedAt != expectedProduct.CreatedAt.UnixMilli() {
+			t.Errorf("CreatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), payload.CreatedAt)
+		}
+		if payload.UpdatedAt != expectedProduct.CreatedAt.UnixMilli() {
+			t.Errorf("UpdatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), payload.UpdatedAt)
+		}
 	}
 }

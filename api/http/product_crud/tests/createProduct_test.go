@@ -5,54 +5,78 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/lautarojayat/backoffice/api/http/response"
+	"github.com/lautarojayat/backoffice/roles"
 )
 
 func TestCreateCustomerHandler(t *testing.T) {
 
+	tests := []struct {
+		body           string
+		checkBody      bool
+		auth           roles.Role
+		expectedStatus int
+	}{
+		{"{\"name\":\"product1\",\"price\":10}", true, roles.CreateProduct, http.StatusCreated},
+		{"{\"name\":\"product1\",\"price\":10}", false, roles.CreateUser, http.StatusForbidden},
+		{"{\"nam\":\"product1\",\"price\":10}", false, roles.CreateProduct, http.StatusBadRequest},
+		{"{\"name\":\"product1\",\"rice\":10}", false, roles.CreateProduct, http.StatusBadRequest},
+		{"{\"name\":\"\",\"price\":\"\"}", false, roles.CreateProduct, http.StatusBadRequest},
+	}
+
 	mux, _ := setupDbAndMux(t)
 
-	var buf bytes.Buffer
-	buf.WriteString("{\"name\":\"product1\",\"price\":10}")
+	for _, test := range tests {
 
-	req, err := http.NewRequest("POST", "/products/", bytes.NewReader(buf.Bytes()))
+		var buf bytes.Buffer
+		buf.WriteString(test.body)
 
-	if err != nil {
-		t.Fatalf("could not create correct request to test endpoint. error=%q", err)
-	}
+		req, err := http.NewRequest("POST", "/products/", bytes.NewReader(buf.Bytes()))
 
-	rr := httptest.NewRecorder()
+		if err != nil {
+			t.Fatalf("could not create correct request to test endpoint. error=%q", err)
+		}
 
-	mux.ServeHTTP(rr, req)
+		req.Header.Add(roles.DecodedPermsHeader, strconv.FormatUint(uint64(test.auth), 2))
 
-	status := rr.Code
-	if status != http.StatusCreated {
-		t.Errorf("status must be 201, instead got %d", status)
-	}
+		rr := httptest.NewRecorder()
 
-	payload := response.ProductResponse{}
+		mux.ServeHTTP(rr, req)
 
-	err = json.NewDecoder(rr.Result().Body).Decode(&payload)
+		status := rr.Code
+		if status != test.expectedStatus {
+			t.Errorf("status must be %d, instead got %d", test.expectedStatus, status)
+		}
 
-	if err != nil {
-		t.Fatalf("couldn't read response body. error=%q", err)
-	}
+		if !test.checkBody {
+			continue
+		}
 
-	if payload.Id <= 0 {
-		t.Errorf("Id must have been greater than 0, instead got %d", payload.Id)
-	}
-	if payload.CreatedAt <= 0 {
-		t.Errorf("CreatedAt must have been greater than 0, instead got %d", payload.CreatedAt)
-	}
-	if payload.UpdatedAt <= 0 {
-		t.Errorf("UpdatedAt must have been greater than 0, instead got %d", payload.UpdatedAt)
-	}
-	if payload.Name != "product1" {
-		t.Errorf("product name must have been product1, instead got %q", payload.Name)
-	}
-	if payload.Price != 10 {
-		t.Errorf("price must have been 10, instead got %d", payload.Price)
+		payload := response.ProductResponse{}
+
+		err = json.NewDecoder(rr.Result().Body).Decode(&payload)
+
+		if err != nil {
+			t.Fatalf("couldn't read response body. error=%q", err)
+		}
+
+		if payload.Id <= 0 {
+			t.Errorf("Id must have been greater than 0, instead got %d", payload.Id)
+		}
+		if payload.CreatedAt <= 0 {
+			t.Errorf("CreatedAt must have been greater than 0, instead got %d", payload.CreatedAt)
+		}
+		if payload.UpdatedAt <= 0 {
+			t.Errorf("UpdatedAt must have been greater than 0, instead got %d", payload.UpdatedAt)
+		}
+		if payload.Name != "product1" {
+			t.Errorf("product name must have been product1, instead got %q", payload.Name)
+		}
+		if payload.Price != 10 {
+			t.Errorf("price must have been 10, instead got %d", payload.Price)
+		}
 	}
 }

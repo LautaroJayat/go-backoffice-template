@@ -2,7 +2,6 @@ package tests
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -10,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/lautarojayat/backoffice/products"
+	"github.com/lautarojayat/backoffice/roles"
 )
 
 func TestUpdateCustomerHandler(t *testing.T) {
@@ -22,52 +22,79 @@ func TestUpdateCustomerHandler(t *testing.T) {
 		t.Fatalf("could not create product to test endpoint. error=%q", result.Error)
 	}
 
-	id := strconv.FormatUint(uint64(expectedProduct.ID), 10)
+	id := uint64(expectedProduct.ID)
 
-	var builder strings.Builder
-	builder.WriteString("/products/")
-	builder.WriteString(id)
-	path := builder.String()
-
-	newName := "p2"
-	newPrice := 15
-	reqBody := fmt.Sprintf(`{"name":"%s", "price":%d}`, newName, newPrice)
-	req, err := http.NewRequest("PUT", path, bytes.NewReader([]byte(reqBody)))
-
-	if err != nil {
-		t.Fatalf("could not create correct request to test endpoint. error=%q", err)
+	tests := []struct {
+		id             string
+		body           string
+		checkBody      bool
+		auth           roles.Role
+		expectedStatus int
+		expectedName   string
+		expectedPrice  int
+	}{
+		{strconv.FormatUint(id, 10), "{\"name\":\"product2\",\"price\":11}", true, roles.ModifyProduct, http.StatusAccepted, "product2", 11},
+		{strconv.FormatUint(id+1, 10), "{\"name\":\"product1\",\"price\":10}", false, roles.ModifyProduct, http.StatusNotFound, "", 0},
+		{strconv.FormatUint(id, 10), "{\"nam\":\"product3\",\"price\":12}", true, roles.ModifyProduct, http.StatusAccepted, "product2", 12},
+		{strconv.FormatUint(id, 10), "{\"name\":\"product4\",\"rice\":10}", true, roles.ModifyProduct, http.StatusAccepted, "product4", 12},
+		{strconv.FormatUint(id, 10), "{\"name\":\"\",\"price\":\"\"}", false, roles.ModifyProduct, http.StatusBadRequest, "", 0},
 	}
 
-	rr := httptest.NewRecorder()
-	mux.ServeHTTP(rr, req)
+	for _, test := range tests {
 
-	if rr.Code != http.StatusAccepted {
-		t.Errorf("status must be 202, instead got %d", rr.Code)
-	}
+		var builder strings.Builder
+		builder.WriteString("/products/")
+		builder.WriteString(test.id)
+		path := builder.String()
 
-	updatedProduct := products.Product{}
+		req, err := http.NewRequest("PUT", path, bytes.NewReader([]byte(test.body)))
 
-	result = db.Where("id = ?", expectedProduct.ID).Find(&updatedProduct)
+		if err != nil {
+			t.Fatalf("could not create correct request to test endpoint. error=%q", err)
+		}
 
-	if result.Error != nil {
-		t.Fatalf("couldn't read updated user from db. error=%q", result.Error)
-	}
+		req.Header.Add(roles.DecodedPermsHeader, strconv.FormatUint(uint64(test.auth), 2))
 
-	if updatedProduct.ID != expectedProduct.ID {
-		t.Errorf("Id must be %d, instead got %d", expectedProduct.ID, updatedProduct.ID)
-	}
+		rr := httptest.NewRecorder()
+		mux.ServeHTTP(rr, req)
 
-	if updatedProduct.Name != newName {
-		t.Errorf("expected name must be %q, but got %q", newName, updatedProduct.Name)
-	}
-	if int(updatedProduct.Price) != newPrice {
-		t.Errorf("expected price must be %d, but got %d", newPrice, updatedProduct.Price)
-	}
+		if rr.Code != test.expectedStatus {
+			t.Errorf("status must be %d, instead got %d", test.expectedStatus, rr.Code)
+		}
 
-	if updatedProduct.CreatedAt.Local().UnixMilli() != expectedProduct.CreatedAt.UnixMilli() {
-		t.Errorf("CreatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), updatedProduct.CreatedAt.UnixMilli())
-	}
-	if updatedProduct.UpdatedAt.UnixMilli() <= expectedProduct.UpdatedAt.UnixMilli() {
-		t.Errorf("UpdatedAt must be greater after an update")
+		if !test.checkBody {
+			continue
+		}
+
+		id, err := strconv.Atoi(test.id)
+		if err != nil {
+			t.Error("could not convert string id to int for query")
+		}
+
+		updatedProduct := products.Product{}
+
+		result = db.Where("id = ?", id).Find(&updatedProduct)
+
+		if result.Error != nil {
+			t.Fatalf("couldn't read updated product from db. error=%q", result.Error)
+		}
+
+		if updatedProduct.ID != uint(id) {
+			t.Errorf("Id must be %d, instead got %d", id, updatedProduct.ID)
+		}
+
+		if updatedProduct.Name != test.expectedName {
+			t.Errorf("expected name must be %q, but got %q", test.expectedName, updatedProduct.Name)
+		}
+		if int(updatedProduct.Price) != test.expectedPrice {
+			t.Errorf("expected price must be %d, but got %d", test.expectedPrice, updatedProduct.Price)
+		}
+
+		if updatedProduct.CreatedAt.Local().UnixMilli() != expectedProduct.CreatedAt.UnixMilli() {
+			t.Errorf("CreatedAt must be %d, instead got %d", expectedProduct.CreatedAt.UnixMilli(), updatedProduct.CreatedAt.UnixMilli())
+		}
+		if updatedProduct.UpdatedAt.UnixMilli() <= expectedProduct.UpdatedAt.UnixMilli() {
+			t.Errorf("UpdatedAt must be greater after an update")
+		}
 	}
 }

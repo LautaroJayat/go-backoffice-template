@@ -20,7 +20,12 @@ func (pmux *productsMux) findProduct(w http.ResponseWriter, r *http.Request) {
 	p, err := pmux.r.FindById(id)
 
 	if err != nil {
+		pmux.l.Printf("error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if p == nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
