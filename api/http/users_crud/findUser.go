@@ -9,17 +9,17 @@ import (
 	"github.com/lautarojayat/backoffice/api/http/response"
 )
 
-func (cmux *usersMux) findUser(w http.ResponseWriter, r *http.Request) {
+func (umux *usersMux) findUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		cmux.l.Printf("couldn't extract id from url. error=%q", err)
+		umux.l.Printf("couldn't extract id from url. error=%q", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	c, err := cmux.r.FindById(id)
+	c, err := umux.r.FindById(id)
 	if err != nil {
-		cmux.l.Printf("internal error. error=%q", err)
+		umux.l.Printf("internal error. error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -32,7 +32,7 @@ func (cmux *usersMux) findUser(w http.ResponseWriter, r *http.Request) {
 	response, err := json.Marshal(response.ToUserResponse(*c))
 
 	if err != nil {
-		cmux.l.Printf("couldn't marshal users to json response. error=%q", err)
+		umux.l.Printf("couldn't marshal users to json response. error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

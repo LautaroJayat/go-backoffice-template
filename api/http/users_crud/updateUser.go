@@ -9,17 +9,17 @@ import (
 	users "github.com/lautarojayat/backoffice/users"
 )
 
-func (cmux *usersMux) updateUser(w http.ResponseWriter, r *http.Request) {
+func (umux *usersMux) updateUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		cmux.l.Printf("couldn't extract id from url. error=%q", err)
+		umux.l.Printf("couldn't extract id from url. error=%q", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	users := &users.User{}
 
 	if err := json.NewDecoder(r.Body).Decode(users); err != nil {
-		cmux.l.Printf("could not extract user from request. error=%q", err)
+		umux.l.Printf("could not extract user from request. error=%q", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -29,10 +29,10 @@ func (cmux *usersMux) updateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	done, err := cmux.r.UpdateOne(id, users.Name)
+	done, err := umux.r.UpdateOne(id, users.Name)
 
 	if err != nil {
-		cmux.l.Printf("could not update users. error=%q", err)
+		umux.l.Printf("could not update users. error=%q", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
