@@ -67,3 +67,6 @@ See [role package](./roles/roles.go) and [middleware package](./api/http/middlew
 ```bash
 curl --resolve "backoffice.example:80:$(minikube ip)" -i http://backoffice.example/backoffice/products/1 -H "X-Decoded-Perms: 2"
 ```
+
+## The Monkey
+![The Monkey](the_monke.jpg)
