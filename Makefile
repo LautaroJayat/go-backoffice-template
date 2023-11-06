@@ -1,10 +1,10 @@
 build-server:
 	go build cmd/server/main.go
 
-run-db:
+run-external:
 	sudo docker compose -f DockerCompose.test.yaml up --build
 
-terminate-db:
+terminate-external:
 	sudo docker compose -f DockerCompose.test.yaml down
 
 run-redis:
@@ -14,11 +14,11 @@ terminate-redis:
 	sudo docker compose -f DockerCompose.propagation.test.yaml down
 
 test-api:
-# first run-db
+# first run-external
 	go test ./api/...
 
 test-propagation:
-# first run-redis
+# first run-redis or run-external
 	go test ./propagation/...
 
 clean:
