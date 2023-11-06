@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: rewrite
+  namespace: default
+spec:
+  rules:
+  - host: backoffice.example
+    http:
+      paths:
+      - path: /backoffice(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backoffice-svc
+            port:
+              number: 8080

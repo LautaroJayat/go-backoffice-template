@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backoffice
+  labels:
+    app: backoffice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backoffice
+  template:
+    metadata:
+      labels:
+        app: backoffice
+    spec:
+      containers:
+      - name: backoffice
+        image: backoffice:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: backoffice-config-files
+          mountPath: /app/config
+          readOnly: true
+      volumes:
+      - name: backoffice-config-files
+        configMap:
+          name: backoffice-configs

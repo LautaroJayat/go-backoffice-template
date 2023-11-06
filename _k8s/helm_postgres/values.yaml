@@ -1,0 +1,8 @@
+# this is insecure
+# dont do it in prod, this is just an example to test a deployment
+global:
+  postgresql:
+    auth:
+      username: user1
+      password: CSPXh3Tf3x
+      database: db1

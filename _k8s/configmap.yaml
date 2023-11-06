@@ -1,0 +1,30 @@
+# insecure! 
+# do not use this kind of pass management in production
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backoffice-configs
+data:
+  default.yaml: |
+    HTTP:
+      ReadTimeout: 10
+      WriteTimeout: 10
+      MaxheaderBytesShift: 1024
+      Port: :8080
+      AppName: "AppNumberOne"
+    DB:
+      Host: postgres-postgresql.default.svc.cluster.local
+      User: user1
+      Password: CSPXh3Tf3x
+      DBName: db1 
+      Port: 5432
+      SSLMode: disable
+    Propagation:
+      Redis:
+        Addr: redis-master.default.svc.cluster.local:6379
+        User: user
+        Password: password
+      Channels:
+        Customers: users
+        Products: products
+
