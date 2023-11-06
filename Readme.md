@@ -8,7 +8,7 @@ The project uses PostgreSQL for persistence, and Redis as a message broker.
 
 I hope you find this didactic example useful :) 
 
-## Run tests:
+## Run tests
 
 For this project we decided to perform tests using an actual Redis and Postgresql connection, more like a Behaviour/acceptance tests, or an integration test.
 
