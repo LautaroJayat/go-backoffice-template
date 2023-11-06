@@ -65,7 +65,10 @@ Remember that you will need to provide value for `X-Decoded-Role` header so the 
 See [role package](./roles/roles.go) and [middleware package](./api/http/middleware/middleware.go) 
 
 ```bash
-curl --resolve "backoffice.example:80:$(minikube ip)" -i http://backoffice.example/backoffice/products/1 -H "X-Decoded-Perms: 2"
+curl \
+--resolve "backoffice.example:80:$(minikube ip)" \
+-i http://backoffice.example/backoffice/products/ \
+-H "X-Decoded-Perms: 1"
 ```
 
 ## The Monkey
