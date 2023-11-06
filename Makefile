@@ -21,5 +21,9 @@ test-propagation:
 # first run-redis or run-external
 	go test ./propagation/...
 
+test:
+# first run-external
+	go test ./...
+
 clean:
 	rm main
