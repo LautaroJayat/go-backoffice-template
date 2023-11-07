@@ -1,0 +1,11 @@
+# insecure! 
+# do not use this kind of pass management in production
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backoffice-proxy-configs
+data:
+  UPSTREAM: http://backoffice-svc:8080
+  PORT: "8080"
+  PUBLIC_KEY: "my super key"
+

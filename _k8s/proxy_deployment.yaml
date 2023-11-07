@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backoffice-proxy
+  labels:
+    app: backoffice-proxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backoffice-proxy
+  template:
+    metadata:
+      labels:
+        app: backoffice-proxy
+    spec:
+      containers:
+      - name: backoffice-proxy
+        image: backoffice-proxy:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: UPSTREAM
+            valueFrom:
+              configMapKeyRef:
+                name: backoffice-proxy-configs
+                key: UPSTREAM
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: backoffice-proxy-configs
+                key: PORT
+          - name: PUBLIC_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: backoffice-proxy-configs
+                key: PUBLIC_KEY

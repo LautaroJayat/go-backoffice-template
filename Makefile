@@ -1,6 +1,9 @@
 build-server:
 	go build cmd/server/main.go
 
+build auth-proxy:
+	go build cmd/auth_proxy/main.go
+
 run-external:
 	sudo docker compose -f DockerCompose.test.yaml up --build
 
@@ -25,5 +28,19 @@ test:
 # first run-external
 	go test ./...
 
+test-proxy:
+	echo "not implemented yet"
+	echo "not implemented yet"
+	echo "not implemented yet"
+
+
+gen-test-keys:
+	rm -drf proxy/.tmp
+	mkdir proxy/.tmp
+	openssl genrsa -out proxy/.tmp/private.pem 2048
+	openssl rsa -in proxy/.tmp/private.pem -pubout > proxy/.tmp/public.pem
+
 clean:
-	rm main
+	rm -drf proxy/.tmp
+	rm -f main
+
