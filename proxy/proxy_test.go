@@ -1,8 +1,11 @@
 package proxy
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -20,7 +23,14 @@ func TestDecoder(t *testing.T) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 	}
-	privKey, pubKey := ReadKeys(t)
+
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		log.Fatalf("could not access cwd. error=%q", err)
+	}
+	keyPath := path.Join(cwd, ".tmp")
+	privKey, pubKey := ReadKeys(keyPath)
 
 	tests := []struct {
 		hasErr     bool
@@ -63,7 +73,13 @@ func TestAuthChecker(t *testing.T) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 	}
-	privKey, pubKey := ReadKeys(t)
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		log.Fatalf("could not access cwd. error=%q", err)
+	}
+	keyPath := path.Join(cwd, ".tmp")
+	privKey, pubKey := ReadKeys(keyPath)
 
 	tests := []struct {
 		expectedCode int
