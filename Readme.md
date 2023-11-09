@@ -54,15 +54,19 @@ If you want to try this out in minikube you can follow these steps.
 
 ```bash
 minikube addons enable helm-tiller
-minikube addons enable ingress 
+minikube addons enable ingress
+minikube addons enable registry 
 ```
 
-### 2. Build and push docker image into minikube's docker registry
+### 2. Build and push docker images into minikube's docker registry
 
 ```bash
 eval $(minikube docker-env)
-docker build -t backoffice
-docker push backoffice
+docker build -t backoffice localhost:5000/backoffice
+docker push localhost:5000/backoffice
+docker build -t auth_proxy localhost:5000/auth_proxy
+docker push localhost:5000/auth_proxy
+
 ```
 
 ### 3. Deploy Redis and Postgres
@@ -73,18 +77,27 @@ helm install -f _k8s/helm_redis/values.yaml redis bitnami/redis
 helm install -f _k8s/helm_postgres/values.yaml postgres bitnami/postgresql
 ```
 
-### 4. Deploy the application
+### 4. Create keys for the proxy and update the configmap
 ```bash
+make gen-test-keys
+# keys will be in proxy/.tmp/{public.pem, private.pem}
+# now update the configmap field in _k8s/proxy_configmap.yaml
+# so it has the new public key in data.PUBLIC_KEY
+```
+
+### 5. Deploy the application
+```bash
+# change the ingress so it points directly to the backoffice service and then
 minikube kubectl -- create -f ./_k8s
 ```
 
-### 5. Test endpoints
+### 6. Test endpoints w/o the proxy
 
 After this, you will be able to reach our application through the ingress.
 
 The simplest way to interact is by using `curl`.
 
-Remember that you will need to provide value for `X-Decoded-Role` header so the auth middleware allows you to reach the actual endpoint.
+Remember that you choose not to deploy the auth proxy, you will need to change the ingress and provide value for `X-Decoded-Role` header so the auth middleware allows you to reach the actual endpoint.
 
 See [role package](./roles/roles.go) and [middleware package](./api/http/middleware/middleware.go) 
 
@@ -94,6 +107,59 @@ curl \
 -i http://backoffice.example/backoffice/products/ \
 -H "X-Decoded-Perms: 1"
 ```
+
+### 7. Test the whole deployment
+
+If you want to test the whole deployment first deploy everything with:
+
+```bash
+minikube kubectl -- create -f ./_k8s
+```
+
+After that I recommend to build and use the `genToken` binary:
+```bash
+# after make gen-test-keys
+make build-token-generator
+
+# first arg is where the keys are
+# if second arg is "update" it will create a fresh token
+./genToken $(pwd)/proxy/.tmp update
+```
+Then, you will have the token as the output of the command, so you can build your http request as follows:
+
+```bash
+export TOKEN_ENV=$(./genToken $(pwd)/proxy/.tmp update)
+
+curl \
+--resolve "backoffice.example:80:$(minikube ip)" \
+-i http://backoffice.example/backoffice/products/ \
+-H "Auth: "$TOKEN_ENV""
+```
+
+## API
+
+The endpoints are standard REST APIs:
+
+```sh
+# To list resources
+GET http://backoffice.example/backoffice/{ products | users }
+
+# To get by ID
+GET http://backoffice.example/backoffice/{ products | users }/{id}
+
+# To create an entity
+POST http://backoffice.example/backoffice/{ products | users }/
+
+# To replace an entity
+PUT http://backoffice.example/backoffice/{ products | users }/
+
+# To delete
+DELETE http://backoffice.example/backoffice/{products | users}/{id}
+```
+
+## Screenshot
+![Working API](working_api.png)
+
 
 ## The Monkey
 ![The Monkey](the_monke.jpg)
