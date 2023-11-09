@@ -10,6 +10,9 @@ build-docker-backoffice:
 build-docker-auth-proxy:
 	docker build -t auth_proxy -f Dockerfile.proxy .
 
+build-token-generator:
+	go build -o ./genToken proxy/tokenGenerator/main.go
+
 run-external:
 	sudo docker compose -f DockerCompose.test.yaml up --build
 

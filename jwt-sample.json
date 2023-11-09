@@ -1,0 +1,10 @@
+{
+    "name": "john",
+    "email": "john@email.com",
+    "role": 1,
+    "iat": 0,
+    "exp": 0,
+    "sub": "john",
+    "id": 1,
+    "aud": "backoffice"
+}
