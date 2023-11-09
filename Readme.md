@@ -10,7 +10,7 @@ I hope you find this didactic example useful :)
 
 ## Architecture
 
-![Static Diagram](static_diagram.png)
+![Static Diagram](assets/static_diagram.png)
 
 As we can see in the diagram, the project has been conceived to be deployed in a kubernetes cluster.
 
@@ -46,7 +46,10 @@ DELETE http://backoffice.example/backoffice/{products | users}/{id}
 
 ## Minikube deployment
 
-If you want to try this out in minikube you can follow these steps.
+If you want to try this out in minikube you can follow these steps, or click picture above to go to youtube and see the video example:
+
+[![Watch the video](assets/video.png)](https://www.youtube.com/watch?v=ZKjywwfIMM8)
+
 
 ### 1. Enable addons
 
@@ -123,7 +126,7 @@ curl \
 
 A working deployment should work as the following screenshot:
 
-![Working API](working_api.png)
+![Working API](assets/working_api.png)
 
 ## Run tests
 
@@ -149,4 +152,4 @@ make clean
 ```
 
 ## The Monkey
-![The Monkey](the_monke.jpg)
+![The Monkey](assets/the_monke.jpg)
