@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lautarojayat/backoffice/api/http/meta"
 	"github.com/lautarojayat/backoffice/proxy"
 )
 
@@ -32,6 +33,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not start proxy due to bad upstream url provided. error=%q", err)
 	}
-	http.HandleFunc("/", proxy.AuthChecker(p, parsedPKey))
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	authChecker := proxy.AuthChecker(p, parsedPKey)
+	metaMux := meta.NewMux(log.Default())
+
+	authProxyMux := http.NewServeMux()
+	authProxyMux.HandleFunc("/", authChecker)
+	authProxyMux.Handle("/meta/", http.StripPrefix("/meta", metaMux))
+
+	log.Fatal(http.ListenAndServe(":"+port, authProxyMux))
 }
