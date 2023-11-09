@@ -1,81 +1,13 @@
 package proxy
 
 import (
-	"crypto/rsa"
-	"io"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path"
 	"testing"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-func createRSASignedToken(input JWTStructure, privKey *rsa.PrivateKey) string {
-	// Create a new token object, specifying signing method and the claims
-	// you would like it to contain.
-	token := jwt.NewWithClaims(jwt.SigningMethodRS512, input)
-
-	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := token.SignedString(privKey)
-	if err != nil {
-		log.Fatalf("could not create jwt for testing. error=%q", err)
-	}
-	return tokenString
-}
-
-func readKeys(t *testing.T) (*rsa.PrivateKey, *rsa.PublicKey) {
-	cwd, err := os.Getwd()
-
-	if err != nil {
-		t.Fatalf("could not acces cwd. error=%q", err)
-	}
-
-	privateKeyPath := path.Join(cwd, ".tmp", "private.pem")
-	publicKeyPath := path.Join(cwd, ".tmp", "public.pem")
-
-	privFile, err := os.Open(privateKeyPath)
-
-	if err != nil {
-		t.Fatalf("could not open private key. error=%q", err)
-	}
-
-	pubFile, err := os.Open(publicKeyPath)
-
-	if err != nil {
-		t.Fatalf("could not open public key. error=%q", err)
-	}
-
-	privateKey, err := io.ReadAll(privFile)
-
-	if err != nil {
-		t.Fatalf("could not read private key. error=%q", err)
-	}
-
-	pubKey, err := io.ReadAll(pubFile)
-
-	if err != nil {
-		t.Fatalf("could not read public key. error=%q", err)
-	}
-
-	priv, err := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
-
-	if err != nil {
-		t.Fatalf("could not parse rsa private key. error=%q", err)
-	}
-
-	pub, err := jwt.ParseRSAPublicKeyFromPEM(pubKey)
-
-	if err != nil {
-		t.Fatalf("could not parse rsa private key. error=%q", err)
-	}
-
-	return priv, pub
-
-}
 
 func TestDecoder(t *testing.T) {
 	okToken := jwt.RegisteredClaims{
@@ -88,7 +20,7 @@ func TestDecoder(t *testing.T) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 	}
-	privKey, pubKey := readKeys(t)
+	privKey, pubKey := ReadKeys(t)
 
 	tests := []struct {
 		hasErr     bool
@@ -102,7 +34,7 @@ func TestDecoder(t *testing.T) {
 		{true, false, JWTStructure{1, "John", "john@email.com", expiredToken}},
 	}
 	for i, test := range tests {
-		tokenString := createRSASignedToken(test.inputToken, privKey)
+		tokenString := CreateRSASignedToken(test.inputToken, privKey)
 		token, err := DecodeToken(tokenString, pubKey)
 		if err != nil && !test.hasErr {
 			t.Errorf("testcase %d. received an unexpected error. error=%q", i, err)
@@ -120,7 +52,7 @@ func TestDecoder(t *testing.T) {
 	}
 }
 
-func TestAuthchecker(t *testing.T) {
+func TestAuthChecker(t *testing.T) {
 	okToken := jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -131,7 +63,7 @@ func TestAuthchecker(t *testing.T) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 	}
-	privKey, pubKey := readKeys(t)
+	privKey, pubKey := ReadKeys(t)
 
 	tests := []struct {
 		expectedCode int
@@ -165,7 +97,7 @@ func TestAuthchecker(t *testing.T) {
 		var tokenString string
 
 		if test.inputToken != nil {
-			tokenString = createRSASignedToken(*test.inputToken, privKey)
+			tokenString = CreateRSASignedToken(*test.inputToken, privKey)
 		} else {
 			tokenString = ""
 		}
