@@ -89,41 +89,28 @@ make gen-test-keys
 minikube kubectl -- create -f ./_k8s
 ```
 
-### 6. Test endpoints w/o the proxy
+### 6. Test the whole deployment
 
-After this, you will be able to reach our application through the ingress.
+If you want to test the whole deployment remember that the proxy will block invalid tokens while the backoffice application will return 403 if the provided role is invalid.
 
-The simplest way to interact is by using `curl`.
+To provide the correct role for the token see [role package](./roles/roles.go) and [middleware package](./api/http/middleware/middleware.go).
 
-Remember that you choose not to deploy the auth proxy, you will need to change the ingress and provide value for `X-Decoded-Role` header so the auth middleware allows you to reach the actual endpoint.
 
-See [role package](./roles/roles.go) and [middleware package](./api/http/middleware/middleware.go) 
+After that I recommend to build and use the `genToken` binary to create a fresh new token:
 
-```bash
-curl \
---resolve "backoffice.example:80:$(minikube ip)" \
--i http://backoffice.example/backoffice/products/ \
--H "X-Decoded-Perms: 1"
-```
-
-### 7. Test the whole deployment
-
-If you want to test the whole deployment first deploy everything with:
-
-```bash
-minikube kubectl -- create -f ./_k8s
-```
-
-After that I recommend to build and use the `genToken` binary:
 ```bash
 # after make gen-test-keys
 make build-token-generator
 
+# it will use jwt-sample.json as the body
 # first arg is where the keys are
 # if second arg is "update" it will create a fresh token
 ./genToken $(pwd)/proxy/.tmp update
 ```
-Then, you will have the token as the output of the command, so you can build your http request as follows:
+
+Then, you will have the token as the output of the command.
+
+You can copy and paste the token manually in the auth header or do something like:
 
 ```bash
 export TOKEN_ENV=$(./genToken $(pwd)/proxy/.tmp update)
@@ -140,7 +127,7 @@ A working deployment should work as the following screenshot:
 
 ## Run tests
 
-For this project we decided to perform tests using an actual Redis and Postgresql connection, more like a Behavior/acceptance tests, or an integration test.
+For this project we decided to perform tests using an actual Redis and Postgresql connection, more like a behavior/acceptance tests, or an integration test.
 
 To try them out you can use our provided docker-compose files and make scripts:
 
