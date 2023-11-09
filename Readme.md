@@ -23,27 +23,25 @@ The flow is the following:
 6. Finally it forwards the request to the main application.
 7. The application is responsible for checking permissions and interacting with the DB (Postgres) and the message broker (Redis).
 
-## Run tests
+## API
 
-For this project we decided to perform tests using an actual Redis and Postgresql connection, more like a Behavior/acceptance tests, or an integration test.
+The endpoints are standard REST APIs:
 
-To try them out you can use our provided docker-compose files and make scripts:
+```sh
+# To list resources
+GET http://backoffice.example/backoffice/{ products | users }
 
-```bash
-# this will create RSA keys for the auth proxy
-make gen-test-keys
+# To get by ID
+GET http://backoffice.example/backoffice/{ products | users }/{id}
 
-# this will run redis and postgres
-make run-external
+# To create an entity
+POST http://backoffice.example/backoffice/{ products | users }/
 
-# this will run all tests
-make test
+# To replace an entity
+PUT http://backoffice.example/backoffice/{ products | users }/
 
-# this will terminate all containers we created
-make terminate-external
-
-# and this will clean the generated RSA keys
-make clean
+# To delete
+DELETE http://backoffice.example/backoffice/{products | users}/{id}
 ```
 
 ## Minikube deployment
@@ -136,30 +134,32 @@ curl \
 -H "Auth: "$TOKEN_ENV""
 ```
 
-## API
+A working deployment should work as the following screenshot:
 
-The endpoints are standard REST APIs:
-
-```sh
-# To list resources
-GET http://backoffice.example/backoffice/{ products | users }
-
-# To get by ID
-GET http://backoffice.example/backoffice/{ products | users }/{id}
-
-# To create an entity
-POST http://backoffice.example/backoffice/{ products | users }/
-
-# To replace an entity
-PUT http://backoffice.example/backoffice/{ products | users }/
-
-# To delete
-DELETE http://backoffice.example/backoffice/{products | users}/{id}
-```
-
-## Screenshot
 ![Working API](working_api.png)
 
+## Run tests
+
+For this project we decided to perform tests using an actual Redis and Postgresql connection, more like a Behavior/acceptance tests, or an integration test.
+
+To try them out you can use our provided docker-compose files and make scripts:
+
+```bash
+# this will create RSA keys for the auth proxy
+make gen-test-keys
+
+# this will run redis and postgres
+make run-external
+
+# this will run all tests
+make test
+
+# this will terminate all containers we created
+make terminate-external
+
+# and this will clean the generated RSA keys
+make clean
+```
 
 ## The Monkey
 ![The Monkey](the_monke.jpg)
