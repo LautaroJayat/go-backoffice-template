@@ -16,10 +16,14 @@ spec:
     spec:
       containers:
       - name: backoffice-proxy
-        image: backoffice-proxy:latest
+        image: auth_proxy:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /meta/status
+            port: 8080
         env:
           - name: UPSTREAM
             valueFrom:
