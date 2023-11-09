@@ -1,8 +1,14 @@
 build-server:
 	go build cmd/server/main.go
 
-build auth-proxy:
+build-auth-proxy:
 	go build cmd/auth_proxy/main.go
+
+build-docker-backoffice:
+	docker build -t backoffice -f Dockerfile.app .
+
+build-docker-auth-proxy:
+	docker build -t auth_proxy -f Dockerfile.proxy .
 
 run-external:
 	sudo docker compose -f DockerCompose.test.yaml up --build
