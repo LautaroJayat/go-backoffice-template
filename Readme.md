@@ -46,9 +46,7 @@ DELETE http://backoffice.example/backoffice/{products | users}/{id}
 
 ## Minikube deployment
 
-If you want to try this out in minikube you can follow these steps, or click picture above to go to youtube and see the video example:
-
-[![Watch the video](assets/video.png)](https://www.youtube.com/watch?v=ZKjywwfIMM8)
+If you want to try this out in minikube you can follow these steps [or click here to go to youtube and see the video example](https://www.youtube.com/watch?v=ZKjywwfIMM8):
 
 
 ### 1. Enable addons
