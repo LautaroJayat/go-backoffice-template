@@ -36,9 +36,14 @@ GET http://backoffice.example/backoffice/{ products | users }/{id}
 
 # To create an entity
 POST http://backoffice.example/backoffice/{ products | users }/
+# product body {"name": string, "price": uint }
+# users body {"name": string}
+
 
 # To replace an entity
 PUT http://backoffice.example/backoffice/{ products | users }/
+# product body {"name": string, "price": uint }
+# users body {"name": string }
 
 # To delete
 DELETE http://backoffice.example/backoffice/{products | users}/{id}
